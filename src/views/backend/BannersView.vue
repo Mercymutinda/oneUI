@@ -1,6 +1,7 @@
 <script setup>
-import { reactive, computed, onMounted } from "vue";
-
+import { reactive, ref, computed, onMounted } from "vue";
+import axios from "axios"
+import users from "@/data/usersDataset.json";
 // Vue Dataset, for more info and examples you can check out https://github.com/kouts/vue-dataset/tree/next
 import {
   Dataset,
@@ -12,9 +13,52 @@ import {
 } from "vue-dataset";
 
 // Get example data
-import users from "@/data/usersDataset.json";
 
-// Helper variables
+const banners = ref([]); //store banner data
+const showModal =ref (false); //set visibility of the modal
+const errors =ref ({}); // show errors if any
+
+// storing new banner details
+const newBanners = ref({
+ id:"",
+ title:"",
+ description:"",
+ file:"",
+})
+const createBanners= async () => {
+  const formData = new  FormData();
+  formData.append("id", newBanners.value.id);
+  formData.append("title", newBanners.value.title);
+  formData.append("description", newBanners.value.description);
+  if(newBanners.value.file){
+    formData.append("file", newBanners.value.file);
+  } 
+  
+// Sends a post request to the API  useing POST
+  try {
+    const response = await axios.post("/v1/library/banners", formData, {
+      header: {
+        "Content-Type": "multipart/form-data",
+      }
+    });
+    //refresh the list
+    getBanners();
+showModal.value=false; //close the modal
+newBanners.value= {    //resets the form
+  id:"",
+  title:"",
+  description:"",
+  file:""
+
+ }
+    // console.log("My response", response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+// cols array  to define the columns in the table
 const cols = reactive([
   {
     name: "ID",
@@ -33,11 +77,18 @@ const cols = reactive([
   },
   {
     name: "Image",
-    field: "image",
+    field: "image_url",
     sort: "",
   },
 ]);
 
+//input changes and updates newBanners.value.file
+const onFileChange = (event) => {
+  const file = event.target.files[0];
+  if(file){
+    newBanners.value.file = file;
+  }
+}
 // Sort by functionality
 const sortBy = computed(() => {
   return cols.reduce((acc, o) => {
@@ -49,6 +100,7 @@ const sortBy = computed(() => {
 });
 
 // On sort th click
+// handle the column sorting when a table header is clicked
 function onSort(event, i) {
   let toset;
   const sortEl = cols[i];
@@ -76,20 +128,38 @@ function onSort(event, i) {
 //   sortEl.sort = toset;
 }
 
-// Apply a few Bootstrap 5 optimizations
+// this will fetch the banners from backend API
+
+const getBanners = async() => {
+  try {
+    const response= await axios.get("/v1/library/banners");
+console.log("API Response",response.data );
+    banners.value= response.data.dataPayload.data;  // update the banners.value with response data
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// resets the modal when its closed
+const clearModal= () =>{
+  newBanners.value= {
+    id:"",
+    title:"",
+    description:"",
+    file:"",
+    
+  
+}
+errors.value ={};
+
+};
+
+//when component is mounted it'll fetch the list of banners
 onMounted(() => {
-  // Remove labels from
-  document.querySelectorAll("#datasetLength label").forEach((el) => {
-    el.remove();
-  });
-
-  // Replace select classes
-  let selectLength = document.querySelector("#datasetLength select");
-
-  selectLength.classList = "";
-  selectLength.classList.add("form-select");
-  selectLength.style.width = "80px";
+getBanners();
 });
+
 </script>
 
 <style lang="scss" scoped>
@@ -138,6 +208,48 @@ th.sort {
     }
   }
 }
+
+
+/* Modal Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 </style>
 
 <template>
@@ -147,19 +259,58 @@ th.sort {
     subtitle="Custom functionality to further enrich your tables."
   >
     <template #extra>
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb breadcrumb-alt">
-          <li class="breadcrumb-item">
-            <a class="link-fx" href="javascript:void(0)">Tables</a>
-          </li>
-          <li class="breadcrumb-item" aria-current="page">Helpers</li>
-        </ol>
-      </nav>
+      <!--  adding new Banners -->
+      <button 
+      class="btn btn-primary mb-3"
+      @click="showModal=true">
+        Add banner
+      </button>
+
+      <div v-if=" showModal"class="modal-backdrop">
+      <div class="modal-content">
+        <div class=" modal-header">
+          <h5 class="modal-title"> Add a new banner</h5>
+          <button type="button" class="close" @click="showModal=false"> 
+            <span> &times;</span>
+          </button>
+        </div>
 
 
-      <button @click="showModal = true" class="bg-primary text-white px-4 py-2 rounded">
+             
+<div class="modal-body">
+<input 
+v-model="newBanners.title"
+placeholder="Title"
+class="form-control mb-2 "
+/>
+<input 
+v-model="newBanners.description"
+placeholder="Description"
+class="form-control mb-2"
+
+/>
+<input 
+placeholder="Image"
+class="form-control mb-2"
+type="file"
+@change="onFileChange($event)"
+accept="images/*"
+capture
+
+/>
+<div class="modal-footer justify-content-center">
+      <button 
+      @click="createBanners"
+       class=" bg-primary text-white px-4 py-2 rounded">
       Create Banner
     </button>
+    </div>
+</div>
+      </div>
+
+      </div>
+ 
+ 
     </template>
   </BasePageHeading>
   <!-- END Hero -->
@@ -167,11 +318,15 @@ th.sort {
   <!-- Page Content -->
   <div class="content">
     <BaseBlock title="Vue Dataset" content-full>
+     
+     <!--Table for displaying banners   -->
+     <!-- contains searching, pagination and sorting -->
+     
       <Dataset
         v-slot="{ ds }"
-        :ds-data="users"
+        :ds-data="banners"
         :ds-sortby="sortBy"
-        :ds-search-in="['id', 'title', 'description', 'image']"
+        :ds-search-in="['id', 'title', 'description', 'image_url']"
       >
         <div class="row" :data-page-count="ds.dsPagecount">
           <div id="datasetLength" class="col-md-8 py-2">
@@ -188,25 +343,27 @@ th.sort {
               <table class="table table-striped mb-0">
                 <thead>
                   <tr>
-                    <th scope="col">ID</th>
                     <th
                       v-for="(th, index) in cols"
                       :key="th.field"
                       :class="['sort', th.sort]"
                       @click="onSort($event, index)"
                     >
-                      {{ th.id }} <i class="gg-select float-end"></i>
+                      {{ th.name }} <i class="gg-select float-end"></i>
                     </th>
                   </tr>
                 </thead>
                 <DatasetItem tag="tbody" class="fs-sm">
                   <template #default="{ row, rowIndex }">
                     <tr>
-                      <th scope="row">{{ rowIndex + 1 }}</th>
+                      <!-- <th scope="row">{{ rowIndex + 1 }}</th> -->
                       <td style="min-width: 150px">{{ row.id }}</td>
                       <td>{{ row.title }}</td>
                       <td style="min-width: 150px">{{ row.description }}</td>
-                      <td style="min-width: 150px">{{ row.image }}</td>
+                      <td><img
+                          :src="row.image_url"
+                          style="width: 40px; height: auto"
+                        /></td>
                     </tr>
                   </template>
                 </DatasetItem>

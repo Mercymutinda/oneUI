@@ -13,5 +13,12 @@ export default defineConfig({
   },
   server: {
     host: true,
+    proxy: {
+      "/v1": {
+        target: "http://localhost:8080/ ", //backend URL
+        changeOrigin: true,
+      },
+    },
+    cors: true,
   },
 });
