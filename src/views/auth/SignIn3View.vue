@@ -1,51 +1,42 @@
 <script setup>
-import { reactive, computed } from "vue";
-import { useRouter } from "vue-router";
 import { useTemplateStore } from "@/stores/template";
-
-// Vuelidate, for more info and examples you can check out https://github.com/vuelidate/vuelidate
-import useVuelidate from "@vuelidate/core";
-import { required, minLength } from "@vuelidate/validators";
+import { ref } from "vue";
+import {useRouter} from 'vue-router';
 
 // Main store and Router
 const store = useTemplateStore();
-const router = useRouter();
 
-// Input state variables
-const state = reactive({
-  username: admin,
-  password: admin,
-});
+// sign in form submit
+const username = ref('')
+const password = ref('')
+const router =  useRouter();
 
-// Validation rules
-const rules = computed(() => {
-  return {
-    username: {
-      required,
-      minLength: minLength(3),
-    },
-    password: {
-      required,
-      minLength: minLength(5),
-    },
-  };
-});
+var x = function() {
+    return Math.random().toString(36).substr(2); // remove `0.`
+};
 
-// Use vuelidate
-const v$ = useVuelidate(rules, state);
+var token = function() {
+    return x() + x(); // to make it longer
+};
 
-// On form submission
-async function onSubmit() {
-  const result = await v$.value.$validate();
+token();
 
-  if (!result) {
-    // notify user form is invalid
-    return;
+const onSubmit = () => {
+  if (username.value && password.value && password.value === username.value) {
+   localStorage.setItem("user", username.value , "token", token()); 
+    router.push({ path: "/home" });
+    console.log("MyPassword" , password);
+    console.log("MyUsername" , username);
+  //  JSON.parse(localStorage.setItem("user", username.value));
+    
   }
+  else {
+    console.log( myErrors + "Please enter a valid username and password");
+    return validationMessage;
+  }
+};
 
-  // Go to dashboard
-  router.push({ name: "dashboard" });
-}
+
 </script>
 
 <template>
@@ -137,18 +128,8 @@ async function onSubmit() {
                       id="login-username"
                       name="login-username"
                       placeholder="Username"
-                      :class="{
-                        'is-invalid': v$.username.$errors.length,
-                      }"
-                      v-model="state.username"
-                      @blur="v$.username.$touch"
+                      v-model= "username"
                     />
-                    <div
-                      v-if="v$.username.$errors.length"
-                      class="invalid-feedback animated fadeIn"
-                    >
-                      Please enter your username
-                    </div>
                   </div>
                   <div class="mb-4">
                     <input
@@ -157,18 +138,8 @@ async function onSubmit() {
                       id="login-password"
                       name="login-password"
                       placeholder="Password"
-                      :class="{
-                        'is-invalid': v$.password.$errors.length,
-                      }"
-                      v-model="state.password"
-                      @blur="v$.password.$touch"
+                      v-model="password"
                     />
-                    <div
-                      v-if="v$.password.$errors.length"
-                      class="invalid-feedback animated fadeIn"
-                    >
-                      Please enter your password
-                    </div>
                   </div>
                   <div
                     class="d-flex justify-content-between align-items-center mb-4"

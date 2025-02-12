@@ -11,6 +11,13 @@ export default {
       to: "dashboard",
       icon: "si si-speedometer",
     },
+  {
+    name: "Banners",
+    to:"banners",
+    icon: "si si-layers",
+  }
+  
+  
   ],
   // You can also set an external link to your main navigation and it will render as a link
   // {

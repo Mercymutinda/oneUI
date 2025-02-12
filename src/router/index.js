@@ -13,6 +13,17 @@ import error500 from "@/views/errors/500View.vue";
 import error503 from "@/views/errors/503View.vue";
 import layoutSimple from "@/layouts/variations/Simple.vue";
 import layoutsBackend from "@/layouts/variations/Backend.vue";
+import BannersView from "@/views/backend/BannersView.vue";
+
+
+const requireAuth = (to, from, next) => {
+  const user = localStorage.getItem("user" , "token");
+  if ( user) {
+    next(); // allow to enter route
+  } else {
+    next({ name: "auth-signin3" }); // go to '/signin';
+  }
+};
 
 // Set all routes
 
@@ -25,22 +36,32 @@ const routes = [
       {
         path: "home",
         name: "dashboard",
-        
         component: DashboardView,
+        beforeEnter: requireAuth, // this is the guard
+          
+        
       },
-      // {
-      //   path: "dashb",
-      //   name: "dash",
-      //   component: dashboardView,
-      // },
+
+      // tables (helpers) routes
+{
+  path: "banner",
+name: "banners",
+component: BannersView,
+beforeEnter: requireAuth, // this is the guard
+},
+
     ],
   },
+
+
+
 
   //auth routes
   {
     path: "/signin",
     name: "auth-signin3",
     component: SignIn3View,
+    
   },
 
   //  errors routes

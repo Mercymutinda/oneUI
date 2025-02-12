@@ -37,7 +37,8 @@ onUnmounted(() => {
 });
 
 const logout = () => {
-  router.push({ name: "auth-signin3" });
+  localStorage.removeItem("user", "token"); // to remove the user from the local storage
+  router.push({ name: "auth-signin3" }); // redirect to sign in page
 };
 </script>
 
