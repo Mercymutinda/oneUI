@@ -15,10 +15,9 @@ import layoutSimple from "@/layouts/variations/Simple.vue";
 import layoutsBackend from "@/layouts/variations/Backend.vue";
 import BannersView from "@/views/backend/BannersView.vue";
 
-
-const requireAuth = (to, from, next) => {
-  const user = localStorage.getItem("user" , "token");
-  if ( user) {
+const requireAuth = (to , from, next ) => {
+  const user = localStorage.getItem("user", "token");
+  if (user) {
     next(); // allow to enter route
   } else {
     next({ name: "auth-signin3" }); // go to '/signin';
@@ -38,30 +37,22 @@ const routes = [
         name: "dashboard",
         component: DashboardView,
         beforeEnter: requireAuth, // this is the guard
-          
-        
       },
-
       // tables (helpers) routes
-{
-  path: "banner",
-name: "banners",
-component: BannersView,
-beforeEnter: requireAuth, // this is the guard
-},
-
+      {
+        path: "banner",
+        name: "banners",
+        component: BannersView,
+        beforeEnter: requireAuth, // this is the guard
+      },
     ],
   },
-
-
-
 
   //auth routes
   {
     path: "/signin",
     name: "auth-signin3",
     component: SignIn3View,
-    
   },
 
   //  errors routes

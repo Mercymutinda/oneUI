@@ -5,7 +5,7 @@ declare module "@vue/runtime-core" {
     RouterView: typeof import("vue-router")["RouterView"];
     BaseBlock: typeof import("./src/components/BaseBlock.vue");
     BaseBackground: typeof import("./src/components/BaseBackground.vue");
-    BasePageHeading: typeof import("./src/components/BasePageHeading.vue");
+    // BasePageHeading: typeof import("./src/components/BasePageHeading.vue");
   }
 }
 

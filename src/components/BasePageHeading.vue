@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Component properties
 defineProps({
   title: {
@@ -36,4 +36,4 @@ defineProps({
       </slot>
     </div>
   </div>
-</template>
+</template> -->
