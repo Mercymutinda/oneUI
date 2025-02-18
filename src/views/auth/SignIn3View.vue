@@ -130,6 +130,7 @@ const onSubmit = () => {
                       placeholder="Username"
                       v-model= "username"
                     />
+                    
                   </div>
                   <div class="mb-4">
                     <input
@@ -141,6 +142,7 @@ const onSubmit = () => {
                       v-model="password"
                     />
                   </div>
+                  
                   <div
                     class="d-flex justify-content-between align-items-center mb-4"
                   >

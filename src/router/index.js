@@ -14,6 +14,7 @@ import error503 from "@/views/errors/503View.vue";
 import layoutSimple from "@/layouts/variations/Simple.vue";
 import layoutsBackend from "@/layouts/variations/Backend.vue";
 import BannersView from "@/views/backend/BannersView.vue";
+import LatestnewsView from "@/views/backend/LatestnewsView.vue";
 
 const requireAuth = (to , from, next ) => {
   const user = localStorage.getItem("user", "token");
@@ -45,6 +46,12 @@ const routes = [
         component: BannersView,
         beforeEnter: requireAuth, // this is the guard
       },
+      {
+        path:"latestnews",
+        name:"latestnews",
+        component:LatestnewsView,
+        beforeEnter: requireAuth,
+      }
     ],
   },
 

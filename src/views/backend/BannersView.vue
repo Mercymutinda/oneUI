@@ -26,6 +26,18 @@ const newBanners = ref({
   file: "",
 });
 const createBanners = async () => {
+
+  if (!newBanners.value.title) {
+    errors.value.title = "Title is required";
+  }
+  if (!newBanners.value.description) {
+    errors.value.description = "Description is required";
+  }
+
+  // If there are any errors, stop further execution
+  if (errors.value.title || errors.value.description) {
+    return;
+  }
   const formData = new FormData();
   formData.append("id", newBanners.value.id);
   formData.append("title", newBanners.value.title);
@@ -53,7 +65,8 @@ const createBanners = async () => {
     };
     // console.log("My response", response);
   } catch (error) {
-    console.log(error);
+    console.error("Error response:", error.response);
+    errors.value = error.response?.data?.errorPayload?.errors || {};
   }
 };
 
@@ -121,7 +134,7 @@ const getBanners = async () => {
     console.log("API Response", response.data);
     banners.value = response.data.dataPayload.data; // update the banners.value with response data
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching banners:", error);
   }
 };
 
@@ -248,11 +261,17 @@ th.sort {
               placeholder="Title"
               class="form-control mb-2"
             />
+            <div v-if="errors.title" class="text-danger">
+              {{ errors.title }}
+            </div>
             <input
               v-model="newBanners.description"
               placeholder="Description"
               class="form-control mb-2"
             />
+            <div v-if="errors.description" class="text-danger">
+              {{ errors.description }}
+            </div>
             <input
               placeholder="Image"
               class="form-control mb-2"

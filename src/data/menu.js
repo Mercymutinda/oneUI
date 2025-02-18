@@ -15,7 +15,12 @@ export default {
     name: "Banners",
     to:"banners",
     icon: "si si-layers",
-  }
+  },
+{
+name:"Latest News",
+to:"latestnews",
+icon: "si si-notebook",
+}
   
   
   ],
