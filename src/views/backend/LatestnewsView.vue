@@ -20,15 +20,14 @@ const errors = ref({}); // show errors if any
 
 // storing new banner details
 const newLatest = ref({
-//   id: "",
+  //   id: "",
   title: "",
   content: "",
   file: "",
 });
 const createLatest = async () => {
-  
   const formData = new FormData();
-//   formData.append("id", newLatest.value.id);
+  //   formData.append("id", newLatest.value.id);
   formData.append("title", newLatest.value.title);
   formData.append("content", newLatest.value.content);
   if (newLatest.value.file) {
@@ -47,7 +46,7 @@ const createLatest = async () => {
     showModal.value = false; //close the modal
     newLatest.value = {
       //resets the form
-    //   id: "",
+      //   id: "",
       title: "",
       content: "",
       file: "",
@@ -61,11 +60,11 @@ const createLatest = async () => {
 
 // cols array  to define the columns in the table
 const cols = reactive([
-//   {
-//     name: "ID",
-//     field: "id",
-//     sort: "",
-//   },
+  //   {
+  //     name: "ID",
+  //     field: "id",
+  //     sort: "",
+  //   },
   {
     name: "Title",
     field: "title",
@@ -82,10 +81,10 @@ const cols = reactive([
     sort: "",
   },
   {
-    name:"Actions",
-    field:"actions",
-    sort:"",
-  }
+    name: "Actions",
+    field: "actions",
+    sort: "",
+  },
 ]);
 
 //input changes and updates newlatest.value.file
@@ -142,14 +141,19 @@ const clearModal = () => {
   };
   errors.value = {};
 };
-const editNews = async() => {
+const editNews = async () => {};
 
+const deleteNews = async (id) => {
+  if ( !confirm("Are you sure you want to delete this news item?")) return;
+
+  try {
+    const response = await axios.delete(`/v1/library/news/${id}`);
+    console.log("API Response", response.data);
+    getLatest(); // refresh after delete
+  } catch (error) {
+    console.error("Error fetching latest news:", error);
+  }
 };
-
-const deleteNews =  async() => {
-   
-};
-
 
 //when component is mounted it'll fetch the list of latest news
 onMounted(() => {
@@ -265,15 +269,30 @@ onMounted(() => {
                         />
                       </td>
                       <td class="text-center">
-              <div class="btn-group">
-                <button type="button"  @click="editNews" class="btn btn-sm btn-alt-secondary">
-                  <i class="fa fa-fw fa-pencil-alt"></i>
-                </button>
-                <button type="button" @click="deleteNews" class="btn btn-sm btn-alt-secondary">
-                  <i class="fa fa-fw fa-times"></i>
-                </button>
-              </div>
-            </td>
+                        <div class="btn-group">
+                          <button
+                            type="button"
+                            @click="editNews(row.id)"
+                            class="btn btn-sm btn-alt-secondary"
+                          >
+                            <i class="fa fa-fw fa-pencil-alt"></i>
+                          </button>
+                          <button
+                            type="button"
+                            @click="deleteNews(row.id)"
+                            class="btn btn-sm btn-alt-secondary"
+                          >
+                            <i
+                              :class="[
+                                'fa fa-fw',
+                                row.is_deleted === 0
+                                  ? 'fa-trash-can'
+                                  : 'fa-undo',
+                              ]"
+                            ></i>
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   </template>
                 </DatasetItem>
