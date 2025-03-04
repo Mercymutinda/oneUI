@@ -17,8 +17,8 @@ import BannersView from "@/views/backend/BannersView.vue";
 import LatestnewsView from "@/views/backend/LatestnewsView.vue";
 
 const requireAuth = (to , from, next ) => {
-  const user = localStorage.getItem("user", "token");
-  if (user) {
+  const token = localStorage.getItem("token");
+  if (token) {
     next(); // allow to enter route
   } else {
     next({ name: "auth-signin3" }); // go to '/signin';

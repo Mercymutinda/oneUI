@@ -15,7 +15,7 @@ export default defineConfig({
     host: true,
     proxy: {
       "/v1": {
-        target: "http://localhost:8080/ ", //backend URL
+        target: "http://127.0.0.1:8088/", //backend URL
         changeOrigin: true,
       },
     },

@@ -2,6 +2,7 @@
 import { useTemplateStore } from "@/stores/template";
 import { ref } from "vue";
 import {useRouter} from 'vue-router';
+import axios from "axios";
 
 // Main store and Router
 const store = useTemplateStore();
@@ -10,30 +11,33 @@ const store = useTemplateStore();
 const username = ref('')
 const password = ref('')
 const router =  useRouter();
+const errors = ref({});
 
-var x = function() {
-    return Math.random().toString(36).substr(2); // remove `0.`
-};
 
-var token = function() {
-    return x() + x(); // to make it longer
-};
 
-token();
+const onSubmit = async() => {
+  console.log("Attempt to submit")
+  try{
+    const response = await axios.post( '/v1/auth/login', {
+      username: username.value,
+      password: password.value,
+    });
 
-const onSubmit = () => {
-  if (username.value && password.value && password.value === username.value) {
-   localStorage.setItem("user", username.value , "token", token()); 
-    router.push({ path: "/home" });
-    console.log("MyPassword" , password);
-    console.log("MyUsername" , username);
-  //  JSON.parse(localStorage.setItem("user", username.value));
-    
+  console.log("Login successful",response.data);
+  console.log("Full Response:", response);
+
+
+//storing the token
+localStorage.setItem("token", response.data.dataPayload.data.token);
+  router.push({ name: 'dashboard' });
+
+  }catch (error) {
+    if (error.response.data.errorPayload){
+      errors.value= error.response.data.errorPayload.errors || {};
+    }
+    console.log("what error n",error);
   }
-  else {
-    console.log( myErrors + "Please enter a valid username and password");
-    return validationMessage;
-  }
+
 };
 
 
@@ -130,6 +134,7 @@ const onSubmit = () => {
                       placeholder="Username"
                       v-model= "username"
                     />
+                    <div v-if="errors.username" class="text-danger"> {{ errors.username }} </div>
                     
                   </div>
                   <div class="mb-4">
@@ -141,6 +146,8 @@ const onSubmit = () => {
                       placeholder="Password"
                       v-model="password"
                     />
+                    <div v-if="errors.password" class="text-danger"> {{ errors.password }} </div>
+
                   </div>
                   
                   <div
