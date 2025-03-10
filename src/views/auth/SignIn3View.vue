@@ -1,11 +1,13 @@
 <script setup>
 import { useTemplateStore } from "@/stores/template";
+// import { useCounterstore } from "@/stores/counter";
 import { ref } from "vue";
-import {useRouter} from 'vue-router';
+import {useRouter, RouterLink} from 'vue-router';
 import axios from "axios";
 
 // Main store and Router
 const store = useTemplateStore();
+// const counterStore = useCounterstore();
 
 // sign in form submit
 const username = ref('')
@@ -29,6 +31,7 @@ const onSubmit = async() => {
 
 //storing the token
 localStorage.setItem("token", response.data.dataPayload.data.token);
+
   router.push({ name: 'dashboard' });
 
   }catch (error) {
@@ -128,13 +131,15 @@ localStorage.setItem("token", response.data.dataPayload.data.token);
                   <div class="mb-4">
                     <input
                       type="text"
-                      class="form-control form-control-lg form-control-alt py-3"
+                      class="form-control form-control-lg form-control-alt py-3  "
                       id="login-username"
                       name="login-username"
                       placeholder="Username"
                       v-model= "username"
+                      :class="{ 'border-danger bg-transparent': errors.username }"
+                      
                     />
-                    <div v-if="errors.username" class="text-danger"> {{ errors.username }} </div>
+                    <div v-if="errors.username" class="text-danger " style = " font-size: 13px;"> {{ errors.username }} </div>
                     
                   </div>
                   <div class="mb-4">
@@ -145,8 +150,10 @@ localStorage.setItem("token", response.data.dataPayload.data.token);
                       name="login-password"
                       placeholder="Password"
                       v-model="password"
+                      :class="{ 'border-danger bg-transparent': errors.username }"
+
                     />
-                    <div v-if="errors.password" class="text-danger"> {{ errors.password }} </div>
+                    <div v-if="errors.password" class="text-danger" style = " font-size: 13px;"> {{ errors.password }} </div>
 
                   </div>
                   

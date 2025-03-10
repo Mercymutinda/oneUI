@@ -16,6 +16,9 @@ export default defineConfig({
     proxy: {
       "/v1": {
         target: "http://127.0.0.1:8088/", //backend URL
+        // target: "http://192.168.0.12:9002/",
+        // target: "http://10.17.0.220:9002/",
+        
         changeOrigin: true,
       },
     },

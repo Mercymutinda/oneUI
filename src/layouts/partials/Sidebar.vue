@@ -28,6 +28,18 @@ const store = useTemplateStore();
 onMounted(() => {
   // new SimpleBar(document.getElementById("simplebar-sidebar"));
 });
+
+
+//light mode
+const toggleLightMode = () => {
+  store.darkMode({ mode: 'off' });
+  store.sidebarStyle({ mode: 'light' });
+
+};
+
+// Sidebar toggle icon
+const sidebarIcon=  store.sidebarMini ? 'fa-arrow-left' : 'fa-arrow-right';
+
 </script>
 
 <template>
@@ -75,7 +87,7 @@ onMounted(() => {
             <div class="dropdown d-inline-block mx-1">
               <button
                 type="button"
-                class="btn btn-sm btn-alt-secondary"
+                class="btn btn-sm btn-alt-secondary col"
                 id="sidebar-dark-mode-dropdown"
                 data-bs-toggle="dropdown"
                 aria-haspopup="true"
@@ -95,14 +107,15 @@ onMounted(() => {
                 aria-labelledby="sidebar-dark-mode-dropdown"
               >
                 <button
-                  @click="() => store.darkMode({ mode: 'off' })"
+                  @click="toggleLightMode"
                   type="button"
                   class="dropdown-item d-flex align-items-center gap-2"
-                  :class="{ active: store.settings.darkMode === 'off' }"
+                  :class="{ active: !store.settings.darkMode === 'off' }"
                 >
                   <i class="far fa-sun fa-fw opacity-50"></i>
                   <span class="fs-sm fw-medium">Light</span>
                 </button>
+
                 <button
                   @click="() => store.darkMode({ mode: 'on' })"
                   type="button"
@@ -129,14 +142,19 @@ onMounted(() => {
             <div class="dropdown d-inline-block ms-1">
               <button
                 type="button"
-                class="btn btn-sm btn-alt-secondary"
+                class="btn btn-sm btn-alt-secondary col"
                 id="sidebar-themes-dropdown"
                 data-bs-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="false"
               >
                 <i class="fa fa-fw fa-brush"></i>
+
               </button>
+
+
+
+
               <div
                 class="dropdown-menu dropdown-menu-end fs-sm smini-hide border-0"
                 aria-labelledby="sidebar-themes-dropdown"
@@ -197,11 +215,15 @@ onMounted(() => {
                   <i class="fa fa-circle text-smooth"></i>
                 </button>
                 <!-- END Color Themes -->
+                 
 
                 <template v-if="!store.settings.darkModeActive">
                   <div class="dropdown-divider"></div>
 
                   <!-- Sidebar Styles -->
+
+
+                  
                   <button
                     @click="store.sidebarStyle({ mode: 'light' })"
                     type="button"
@@ -239,6 +261,11 @@ onMounted(() => {
                   >
                     <span>Header Dark</span>
                   </button>
+
+
+
+
+                  
                   <!-- END Header Styles -->
                 </template>
               </div>
@@ -271,7 +298,46 @@ onMounted(() => {
         </slot>
       </div>
       <!-- END Sidebar Scrolling -->
+
+      <!-- Sidebar Toggle Button -->
+      <button
+    type="button"
+    class="btn btn-sm btn-alt-primary sidebar-toggle-btn"
+    @click="store.sidebarMini({ mode: 'toggle' })"
+
+  >
+
+<!-- set the arrow to change direction when the sidebar is collapsed -->
+    <!-- <i :class="['fa fa-fw', store.sidebarMini ? 'fa-arrow-left' : 'fa-arrow-left']">
+       -->
+        <i :class="`fa fa-fw ${sidebarIcon}`"></i>
+  </button>
+  
+      <!-- END Sidebar Toggle Button -->
     </slot>
   </nav>
   <!-- END Sidebar -->
 </template>
+
+
+<style scoped>
+.sidebar-toggle-btn {
+  /* position: absolute; */
+  position: fixed;
+  top: 5%;
+  transform: translateY(-50%);
+  right: -12px; /* Adjust for placement on border */
+  z-index: 1001; /* Ensure it stays on top */
+  /* border-radius: 50%; Optional: Makes it circular */
+  padding: 4px 4px;
+  /* background-color: transparent;Match sidebar background */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  /* border-color: #082542; */
+}
+
+#sidebar.with-mini-nav .sidebar-toggle-btn {
+  right: -30px; /* Adjust if the sidebar is collapsed */
+  transform: translateY(-50%) rotate(180deg); /* Rotate the arrow */
+}
+
+</style>

@@ -2,6 +2,10 @@
 import {  RouterLink } from "vue-router";
 import axios from "axios";
 import { onMounted } from "vue";
+// import { useStore } from "@/store";
+import { useTemplateStore } from "@/stores/template";
+const store = useTemplateStore();
+
 
 const getKanye = async () => {
   try {
@@ -14,6 +18,7 @@ const getKanye = async () => {
 
 onMounted(() => {
   getKanye();
+  store.mainContent({mode:'full'});
 });
 </script>
 

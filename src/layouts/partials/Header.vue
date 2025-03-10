@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useTemplateStore } from "@/stores/template";
+import axios from 'axios';
 
 // Grab example data
 import notifications from "@/data/notifications";
@@ -9,6 +10,7 @@ import notifications from "@/data/notifications";
 // Main store and Router
 const store = useTemplateStore();
 const router = useRouter();
+
 
 // Reactive variables
 const baseSearchTerm = ref("");
@@ -36,9 +38,37 @@ onUnmounted(() => {
   document.removeEventListener("keydown", eventHeaderSearch);
 });
 
-const logout = () => {
-  localStorage.removeItem("user", "token"); // to remove the user from the local storage
-  router.push({ name: "auth-signin3" }); // redirect to sign in page
+// const removeToken(){
+//   console.log("removed the token");
+
+//   localStorage.setItem('token', '');
+
+// }
+
+
+const logout = async () => {
+  console.log("Logout function is being called"); // Debugging
+  try{
+    console.log("Attempting to send logout request...");
+    // removeToken();
+    const response = await axios.delete( '/v1/auth/refresh' );
+
+   // set the token to ""
+  localStorage.setItem("token", "");
+  // localStorage.removeItem("token"); // to remove the user from the local storage right way but not working
+
+  
+router.push({ name: "auth-signin3" }); // redirect to sign in page
+console.log("Logged out successfully")
+
+  } catch(error){
+    if (error.response?.data?.errorPayload){
+      errors.value= error.response.data.errorPayload.errors || {};
+    }
+    console.log("what error n",error);
+  }
+
+
 };
 </script>
 
@@ -60,6 +90,23 @@ const logout = () => {
               >
                 <i class="fa fa-fw fa-bars"></i>
               </button>
+
+
+
+
+<!-- 
+              <button
+                  type="button"
+                  class="btn btn-sm btn-alt-secondary mb-3 col"
+                  @click="
+                    () => {
+                      store.sidebar({ mode: 'toggle' });
+                    }
+                  "
+                >
+                <i class= "fa fa-fw fa-arrow-left"></i>
+                </button> -->
+
               <!-- END Toggle Sidebar -->
 
               <!-- Open Search Section (visible on smaller screens) -->
@@ -70,6 +117,9 @@ const logout = () => {
               >
                 <i class="fa fa-fw fa-search"></i>
               </button>
+
+
+
               <!-- END Open Search Section -->
 
               <!-- Search Form (visible on larger screens) -->
@@ -165,14 +215,15 @@ const logout = () => {
                     >
                       <span class="fs-sm fw-medium">Lock Account</span>
                     </RouterLink>
-                    <RouterLink
-                      :to="{ name: 'auth-signin3' }"
+                    <div
+                      type="button"
                       class="dropdown-item d-flex align-items-center justify-content-between"
                     >
                       <span class="fs-sm fw-medium" @click="logout"
                         >Log Out</span
                       >
-                    </RouterLink>
+                  </div>
+                    
                   </div>
                 </div>
               </div>

@@ -25,12 +25,26 @@ const requireAuth = (to , from, next ) => {
   }
 };
 
+const ifAuthenticated = (to, from, next) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    next({ name: "dashboard" }); // redirect to dashboard if logged in
+  } else {
+    next(); // allow to enter route
+  }
+};
+
+
 // Set all routes
 
 const routes = [
   //dashboard routes
   {
-    path: "",
+    path: "/",
+    redirect: "/home",
+  },
+  {
+    path: "/",
     component: layoutsBackend,
     children: [
       {
@@ -60,6 +74,7 @@ const routes = [
     path: "/signin",
     name: "auth-signin3",
     component: SignIn3View,
+    beforeEnter: ifAuthenticated,
   },
 
   //  errors routes

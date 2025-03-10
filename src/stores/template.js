@@ -40,7 +40,7 @@ export const useTemplateStore = defineStore({
       pageLoader: false,
       rtlSupport: false,
       sideTransitions: true,
-      mainContent: "", // 'boxed', ''narrow'
+      mainContent: "", // 'boxed', ''narrow', 'full'
     },
   }),
   actions: {
@@ -204,10 +204,12 @@ export const useTemplateStore = defineStore({
         if (payload.mode === "on") {
           this.settings.darkMode = "on";
           this.settings.darkModeActive = true;
+          
           lHtml.classList.add("dark");
         } else if (payload.mode === "off") {
           this.settings.darkMode = "off";
           this.settings.darkModeActive = false;
+          this.settings.sidebarDark = false;
           lHtml.classList.remove("dark");
         } else if (payload.mode === "system") {
           this.settings.darkMode = "system";
