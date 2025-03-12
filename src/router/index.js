@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import NProgress from "nprogress/nprogress.js";
-
+import { useAuthStore } from "@/stores/authStore";
 import DashboardView from "@/views/backend/DashboardView.vue";
 
 import SignIn3View from "@/views/auth/SignIn3View.vue";
@@ -15,10 +15,14 @@ import layoutSimple from "@/layouts/variations/Simple.vue";
 import layoutsBackend from "@/layouts/variations/Backend.vue";
 import BannersView from "@/views/backend/BannersView.vue";
 import LatestnewsView from "@/views/backend/LatestnewsView.vue";
+import ForgotPasswordView from "@/views/auth/ForgotPasswordView.vue";
 
 const requireAuth = (to , from, next ) => {
-  const token = localStorage.getItem("token");
-  if (token) {
+  const useAuth = useAuthStore();
+  // const token = localStorage.getItem("token");
+  if (useAuth.user.isAuthenticated) 
+    {
+    console.log("Authenticated", useAuth.user.isAuthenticated);
     next(); // allow to enter route
   } else {
     next({ name: "auth-signin3" }); // go to '/signin';
@@ -26,8 +30,10 @@ const requireAuth = (to , from, next ) => {
 };
 
 const ifAuthenticated = (to, from, next) => {
-  const token = localStorage.getItem("token");
-  if (token) {
+const useAuth = useAuthStore();
+
+  // const token = localStorage.getItem("token");
+  if (useAuth.user.isAuthenticated) {
     next({ name: "dashboard" }); // redirect to dashboard if logged in
   } else {
     next(); // allow to enter route
@@ -74,7 +80,14 @@ const routes = [
     path: "/signin",
     name: "auth-signin3",
     component: SignIn3View,
-    beforeEnter: ifAuthenticated,
+    beforeEnter: ifAuthenticated 
+  },
+
+  {
+path: "/forgotpassword",
+name: "forgotpassword",
+component: ForgotPasswordView,
+beforeEnter: ifAuthenticated 
   },
 
   //  errors routes

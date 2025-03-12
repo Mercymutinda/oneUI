@@ -7,7 +7,7 @@ const store = useTemplateStore();
 
 <template>
   <!-- Footer -->
-  <footer id="page-footer">
+  <footer id="page-footer" >
     <slot>
       <div class="bg-body-light">
         <div class="content py-3">
@@ -32,3 +32,11 @@ const store = useTemplateStore();
   </footer>
   <!-- END Footer -->
 </template>
+
+<style>
+footer{
+  position: fixed;
+  bottom: 0;
+  width: 82%;
+}
+</style>

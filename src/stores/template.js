@@ -151,7 +151,7 @@ export const useTemplateStore = defineStore({
       if (payload.mode === "dark") {
         this.settings.headerDark = true;
       } else if (payload.mode === "light") {
-        this.settings.headerDark = false;
+        this.settings.headerDark = true;
       } else if (payload.mode === "toggle") {
         this.settings.headerDark = !this.settings.headerDark;
       }
@@ -209,7 +209,6 @@ export const useTemplateStore = defineStore({
         } else if (payload.mode === "off") {
           this.settings.darkMode = "off";
           this.settings.darkModeActive = false;
-          this.settings.sidebarDark = false;
           lHtml.classList.remove("dark");
         } else if (payload.mode === "system") {
           this.settings.darkMode = "system";
